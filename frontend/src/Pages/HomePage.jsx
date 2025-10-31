@@ -5,7 +5,7 @@ import Footer from '../components/Footer';
 import ProfilePage from './ProfilePage';
 import EditProfilePage from './EditProfilePage';
 
-function HomePage({ profile, setProfile, goToPredict, goToProfile }) {
+function HomePage({ profile, setProfile, goToPredict, goToProfile, goToLive }) {
   const [showPredictForm, setShowPredictForm] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
 
@@ -23,7 +23,8 @@ function HomePage({ profile, setProfile, goToPredict, goToProfile }) {
       <Navbar 
         onPredictClick={() => { setShowPredictForm(true); setShowEdit(false); }} 
         onHomeClick={handleShowWelcome} 
-        onProfileClick={goToProfile} // use App.js handler
+        onProfileClick={goToProfile}   // ✅ already correct
+        onLiveStatusClick={goToLive}   // ✅ added this line
       />
 
       {!showPredictForm && !showEdit && !profile && (
@@ -60,7 +61,7 @@ function HomePage({ profile, setProfile, goToPredict, goToProfile }) {
         />
       )}
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

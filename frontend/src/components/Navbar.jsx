@@ -1,6 +1,6 @@
 import React from 'react';
 
-function Navbar({ onPredictClick, onHomeClick, onProfileClick }) {
+function Navbar({ onPredictClick, onHomeClick, onProfileClick, onLiveStatusClick }) {
   return (
     <nav
       style={{
@@ -25,31 +25,16 @@ function Navbar({ onPredictClick, onHomeClick, onProfileClick }) {
         }}
       >
         <li>
-          <span 
-            onClick={onHomeClick} 
-            style={{ cursor: 'pointer', textDecoration: 'none', color: '#2b2b2b' }}
-          >
-            Home
-          </span>
+          <span onClick={onHomeClick} style={{ cursor: 'pointer' }}>Home</span>
         </li>
         <li>
-          <span
-            onClick={onPredictClick}
-            style={{ cursor: 'pointer', textDecoration: 'none', color: '#2b2b2b' }}
-          >
-            Predict
-          </span>
+          <span onClick={onPredictClick} style={{ cursor: 'pointer' }}>Predict</span>
         </li>
         <li>
-          <a href="#about" style={{ textDecoration: 'none', color: '#2b2b2b' }}>About</a>
+          <span onClick={onLiveStatusClick} style={{ cursor: 'pointer' }}>Live Status</span>
         </li>
         <li>
-          <span
-            onClick={onProfileClick}  // <-- call the handler passed from HomePage
-            style={{ cursor: 'pointer', textDecoration: 'none', color: '#2b2b2b' }}
-          >
-            Profile
-          </span>
+          <span onClick={onProfileClick} style={{ cursor: 'pointer' }}>Profile</span>
         </li>
       </ul>
     </nav>

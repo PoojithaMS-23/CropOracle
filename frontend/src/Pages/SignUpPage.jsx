@@ -39,7 +39,7 @@ function SignUpPage({ goToLogin, goToHome, setProfile }) { // <-- add setProfile
         alert(result.message);
         // Store the new farmer in App state
         setProfile({ ...dataToSend });
-        goToHome();
+        goToLogin(); 
       } else {
         alert(result.message || "Signup failed");
       }

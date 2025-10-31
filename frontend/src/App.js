@@ -7,9 +7,10 @@ import ResultDisplay from './components/ResultDisplay';
 import Footer from './components/Footer';
 import ProfilePage from './Pages/ProfilePage';
 import EditProfilePage from './Pages/EditProfilePage';
+import LiveStatus from './Pages/LiveStatus'; // ✅ new import
 
 function App() {
-  const [page, setPage] = useState('login'); // login, signup, home, predict, result, profile, edit
+  const [page, setPage] = useState('login'); // login, signup, home, predict, result, profile, edit, live
   const [predictionData, setPredictionData] = useState(null);
   const [profile, setProfile] = useState(null); // logged-in farmer
 
@@ -20,6 +21,7 @@ function App() {
   const goToPredict = () => setPage('predict');
   const goToProfile = () => setPage('profile');
   const goToEdit = () => setPage('edit');
+  const goToLive = () => setPage('live'); // ✅ new page for Live Status
 
   // Called by PricePredictionForm on submit
   const showResult = (data) => {
@@ -43,9 +45,8 @@ function App() {
         {page === 'signup' && (
           <SignUpPage
             goToLogin={goToLogin}
-            setProfile={setProfile}
+            setProfile={setProfile}   // store newly signed-up farmer
             goToHome={goToHome}
-               // store newly signed-up farmer
           />
         )}
 
@@ -54,6 +55,7 @@ function App() {
           <HomePage
             goToPredict={goToPredict}
             goToProfile={goToProfile} // navigate to profile from navbar
+            goToLive={goToLive}       // ✅ navigate to Live Status page
           />
         )}
 
@@ -79,7 +81,7 @@ function App() {
                 background: 'linear-gradient(90deg, #a2c2e2, #f4a6c1)',
                 color: 'white',
                 fontWeight: 'bold',
-                cursor: 'pointer'
+                cursor: 'pointer',
               }}
             >
               Predict Another
@@ -89,17 +91,16 @@ function App() {
 
         {/* PROFILE PAGE */}
         {page === 'profile' && profile && (
-  <ProfilePage
-    profile={profile}
-    onEdit={goToEdit}  // edit profile
-    onLogout={() => {
-      setProfile(null);
-      setPage('login'); // logout
-    }}
-    onHome={goToHome} // navigate to home page
-  />
-)}
-
+          <ProfilePage
+            profile={profile}
+            onEdit={goToEdit}  // edit profile
+            onLogout={() => {
+              setProfile(null);
+              setPage('login'); // logout
+            }}
+            onHome={goToHome} // navigate to home page
+          />
+        )}
 
         {/* EDIT PROFILE PAGE */}
         {page === 'edit' && profile && (
@@ -110,9 +111,14 @@ function App() {
             onSave={goToProfile}
           />
         )}
+
+        {/* ✅ LIVE STATUS PAGE */}
+        {page === 'live' && (
+          <LiveStatus goToHome={goToHome} />
+        )}
       </div>
 
-      
+      <Footer />
     </div>
   );
 }

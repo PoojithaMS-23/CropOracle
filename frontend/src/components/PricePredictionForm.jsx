@@ -24,7 +24,6 @@ function PricePredictionForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Prepare payload for backend
     const payload = {
       crop: formData.crops,
       mandi: formData.mandi,
@@ -40,13 +39,14 @@ function PricePredictionForm() {
 
       const data = await res.json();
 
-      // Set result to display in ResultDisplay.jsx
       setResult({
         predictedPrice: `₹${data.predicted_price.toFixed(2)}`,
-        modifiedPrice: `₹${data.modified_price.toFixed(2)}`,
+        modifiedPrice: `₹${data.modified_price.toFixed(2)}`, // ✅ added
+        predictedYield: `${data.predicted_yield.toFixed(2)} kg`,
         mandi: formData.mandi,
         season: formData.season,
         crop: formData.crops,
+        fullForm: formData,
       });
     } catch (error) {
       console.error("Error fetching price:", error);
@@ -80,7 +80,7 @@ function PricePredictionForm() {
   );
 }
 
-// --- Green Theme Styles ---
+// --- Styling (unchanged) ---
 const pageStyle = {
   minHeight: "100vh",
   backgroundColor: "#e6f4ea",

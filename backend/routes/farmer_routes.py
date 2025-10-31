@@ -1,9 +1,9 @@
 from flask import Blueprint, request, jsonify
-from models.farmer_model import create_farmer, farmer_exists
-from models.farmer_model import update_farmer
+from models.farmer_model import create_farmer, farmer_exists, update_farmer
 
-farmer_bp = Blueprint('farmer', __name__)
+farmer_bp = Blueprint('farmer', __name__)  # <-- Only one blueprint
 
+# ----------------- SIGNUP ROUTE -----------------
 @farmer_bp.route('/signup', methods=['POST'])
 def signup():
     data = request.get_json()
@@ -15,7 +15,6 @@ def signup():
     age = data.get("age")
     phone = data.get("phone")
 
-    # Validate required fields
     if not all([name, username, password, location, age, phone]):
         return jsonify({"message": "All fields are required"}), 400
 
@@ -30,13 +29,11 @@ def signup():
         return jsonify({"message": "Database error"}), 500
 
 
-
-
-farmer_bp = Blueprint('farmer', __name__)
-
+# ----------------- UPDATE PROFILE ROUTE -----------------
 @farmer_bp.route('/update_profile/<int:farmer_id>', methods=['PUT'])
 def update_profile(farmer_id):
     data = request.get_json()
+
     try:
         update_farmer(
             farmer_id,
