@@ -1,0 +1,136 @@
+.schemes-page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.schemes-header {
+    margin-bottom: 30px;
+}
+
+.schemes-header h1 {
+    color: #2c5282;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.filters-container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    background: #f7fafc;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-group label {
+    color: #4a5568;
+    font-weight: 500;
+}
+
+.filter-group select {
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background-color: white;
+    color: #2d3748;
+    cursor: pointer;
+    min-width: 150px;
+}
+
+.filter-group select:focus {
+    outline: none;
+    border-color: #4a9f46;
+    box-shadow: 0 0 0 1px #4a9f46;
+}
+
+.notifications-panel {
+    margin: 30px 0;
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.notifications-panel h2 {
+    color: #2d3748;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
+
+.notifications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.notification-card {
+    display: flex;
+    gap: 15px;
+    padding: 15px;
+    background: #f7fafc;
+    border-radius: 8px;
+    transition: transform 0.2s ease;
+}
+
+.notification-card:hover {
+    transform: translateX(5px);
+}
+
+.notification-icon {
+    font-size: 1.5rem;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-content h3 {
+    color: #2d3748;
+    margin: 0 0 5px 0;
+    font-size: 1.1rem;
+}
+
+.notification-content p {
+    color: #4a5568;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.notification-time {
+    display: block;
+    color: #718096;
+    font-size: 0.8rem;
+    margin-top: 5px;
+}
+
+.no-notifications {
+    text-align: center;
+    color: #718096;
+    padding: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .filters-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-group select {
+        width: 100%;
+    }
+}

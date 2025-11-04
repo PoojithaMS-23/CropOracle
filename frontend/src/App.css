@@ -1,0 +1,18 @@
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 120vh; /* full viewport height */
+}
+
+.App .content {
+  flex: 2; /* main content grows to push footer down */
+}
+
+footer {
+  margin-top: 90px; /* push footer to bottom */
+  background-color: #a8d5ba;
+  color: #2b2b2b;
+  text-align: center;
+  padding: 15px 0;
+  font-size: 0.9rem;
+}
