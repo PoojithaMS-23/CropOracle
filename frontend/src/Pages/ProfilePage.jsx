@@ -1,7 +1,9 @@
 import React from "react";
 
-const ProfilePage = ({ profile, onEdit, onLogout, onHome }) => {
+const ProfilePage = ({ profile, onEdit, onLogout, onHome, onViewCultivations }) => {
   if (!profile) return <p>Loading...</p>; // safety check
+  
+
 
   return (
     <div style={styles.container}>
@@ -19,6 +21,12 @@ const ProfilePage = ({ profile, onEdit, onLogout, onHome }) => {
       <div style={styles.buttons}>
         <button onClick={onEdit} style={styles.editButton}>Edit Profile</button>
         <button onClick={onHome} style={styles.homeButton}>Back to Home</button>
+
+        {/* ✅ NEW BUTTON ADDED */}
+        <button onClick={onViewCultivations} style={styles.cultivationButton}>
+          See Current Cultivations
+        </button>
+
         <button onClick={onLogout} style={styles.logoutButton}>Logout</button>
       </div>
     </div>
@@ -73,6 +81,19 @@ const styles = {
     cursor: "pointer",
     transition: "all 0.2s",
   },
+
+  /* ✅ New Button Style */
+  cultivationButton: {
+    padding: "12px 25px",
+    background: "#2a9d8f",
+    color: "white",
+    border: "none",
+    borderRadius: "8px",
+    fontWeight: "bold",
+    cursor: "pointer",
+    transition: "all 0.2s",
+  },
+
   logoutButton: {
     padding: "12px 25px",
     background: "#f76c6c",

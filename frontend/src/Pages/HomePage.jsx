@@ -4,10 +4,21 @@ import PricePredictionForm from '../components/PricePredictionForm';
 import Footer from '../components/Footer';
 import ProfilePage from './ProfilePage';
 import EditProfilePage from './EditProfilePage';
+import Chatbot from '../components/Chatbot';  
+// console.log({
+//   Navbar,
+//   PricePredictionForm,
+//   Footer,
+//   ProfilePage,
+//   EditProfilePage,
+//   Chatbot,
+// });
 
-function HomePage({ profile, setProfile, goToPredict, goToProfile, goToLive }) {
+
+function HomePage({ profile, setProfile, goToPredict, goToProfile, goToLive, goToCompare }) {
   const [showPredictForm, setShowPredictForm] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false); 
 
   const handleShowWelcome = () => {
     setShowPredictForm(false);
@@ -24,7 +35,9 @@ function HomePage({ profile, setProfile, goToPredict, goToProfile, goToLive }) {
         onPredictClick={() => { setShowPredictForm(true); setShowEdit(false); }} 
         onHomeClick={handleShowWelcome} 
         onProfileClick={goToProfile}   // ✅ already correct
-        onLiveStatusClick={goToLive}   // ✅ added this line
+        onLiveStatusClick={goToLive} 
+        onCompareClick={() => goToCompare()} 
+     // ✅ added this line
       />
 
       {!showPredictForm && !showEdit && !profile && (
@@ -62,8 +75,35 @@ function HomePage({ profile, setProfile, goToPredict, goToProfile, goToLive }) {
       )}
 
       {/* <Footer /> */}
+            {/* Chatbot Floating Icon */}
+      <button
+        onClick={() => setChatOpen(true)}
+        style={chatIconStyle}
+      >
+        💬
+      </button>
+      
+
+      {/* Show chatbot window only when icon clicked */}
+      {chatOpen && <Chatbot closeChat={() => setChatOpen(false)} />}
+
     </div>
   );
 }
+const chatIconStyle = {
+  position: "fixed",
+  bottom: "25px",
+  right: "25px",
+  backgroundColor: "#2e7d32",
+  color: "white",
+  borderRadius: "50%",
+  width: "60px",
+  height: "60px",
+  fontSize: "30px",
+  border: "none",
+  cursor: "pointer",
+  zIndex: 1000,
+};
+
 
 export default HomePage;

@@ -1,18 +1,113 @@
+/* --------------------------------------------------
+   🌾 AGRICULTURE + DATA VISUALIZATION BACKGROUND
+--------------------------------------------------*/
+
 .App {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  min-height: 120vh; /* full viewport height */
+  position: relative;
+  overflow: hidden;
+  font-family: "Poppins", sans-serif;
 }
 
-.App .content {
-  flex: 2; /* main content grows to push footer down */
+/* 🌱 Animated Agriculture SVG Background */
+.agri-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  width: 100%;
+  height: 100%;
+  background: 
+    url("data:image/svg+xml;utf8,
+      <svg viewBox='0 0 1440 700' xmlns='http://www.w3.org/2000/svg'>
+      <defs>
+        <linearGradient id='sky' x1='0' x2='0' y1='0' y2='1'>
+          <stop offset='0%' stop-color='%23a2e3ff'/>
+          <stop offset='100%' stop-color='%23d4ffda'/>
+        </linearGradient>
+      </defs>
+
+      <rect width='100%' height='100%' fill='url(%23sky)' />
+
+      <!-- Sun -->
+      <circle cx='200' cy='120' r='60' fill='%23ffef6e'>
+        <animate attributeName='cy' from='120' to='140' dur='4s' repeatCount='indefinite' direction='alternate'/>
+      </circle>
+
+      <!-- Fields -->
+      <path d='M0 500 Q400 450 900 520 T1440 500 V700 H0 Z'
+            fill='%23a7d47f'/>
+
+      <!-- Crop Rows -->
+      <path d='M0 600 Q400 580 850 650 T1440 600'
+            stroke='%23619347' stroke-width='6' fill='none'/>
+
+      <!-- Moving Clouds -->
+      <g fill='%23ffffff' opacity='0.8'>
+        <ellipse cx='200' cy='180' rx='70' ry='30'>
+          <animate attributeName='cx' from='-150' to='1600' dur='30s' repeatCount='indefinite'/>
+        </ellipse>
+        <ellipse cx='900' cy='140' rx='90' ry='35'>
+          <animate attributeName='cx' from='1600' to='-200' dur='40s' repeatCount='indefinite'/>
+        </ellipse>
+      </g>
+    </svg>"
+  ) center/cover no-repeat;
+  animation: zoom 15s ease-in-out infinite alternate;
 }
 
+/* Slight dynamic zoom effect on background */
+@keyframes zoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.05); }
+}
+
+/* 💹 Animated floating graph data particles */
+.data-dots {
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,0.9) 3px, transparent 3px);
+  background-size: 70px 70px;
+  animation: moveDots 35s linear infinite;
+  z-index: -9;
+  opacity: 0.3;
+}
+
+@keyframes moveDots {
+  from { background-position: 0 0; }
+  to { background-position: 2000px 1200px; }
+}
+
+/* Smooth fade transition */
+.content {
+  flex: 1;
+  padding: 20px;
+  animation: fade 0.6s ease-in-out;
+  z-index: 5;
+}
+
+@keyframes fade {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Glass footer */
 footer {
-  margin-top: 90px; /* push footer to bottom */
-  background-color: #a8d5ba;
-  color: #2b2b2b;
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(10px);
+  color: black;
+  padding: 14px;
   text-align: center;
-  padding: 15px 0;
-  font-size: 0.9rem;
+  font-weight: 600;
+  border-top: 1px solid rgba(255,255,255,0.6);
+}
+
+/* Hover shadows */
+button, .card {
+  transition: 0.3s ease;
+}
+button:hover, .card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
 }

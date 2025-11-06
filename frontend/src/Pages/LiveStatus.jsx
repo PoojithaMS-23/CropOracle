@@ -1,224 +1,166 @@
-import React, { useState, useEffect } from "react";
-import Navbar from "../components/Navbar";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  LabelList,
-} from "recharts";
+import React, { useEffect, useState } from "react";
+import { getAllMandis, getMandiCropData, getCropAllMandisData, getCapacity } from "../services/api";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LabelList } from "recharts";
+import Navbar from "../components/Navbar";   // ✅ Add this import
+import { useNavigate } from "react-router-dom";
+const cropsList = ["Coffee","Coconut","Cocoa","Cardamum","Pepper","Arecanut","Ginger","Tea","Paddy","Groundnut","Blackgram","Cashew","Cotton"];
 
-function LiveStatus({ goToHome, goToProfile, goToPredict }) {
-  const [view, setView] = useState(null);
+function LiveStatus() {
+  const [option, setOption] = useState("");
   const [mandis, setMandis] = useState([]);
-  const [crops, setCrops] = useState([]);
   const [selectedMandi, setSelectedMandi] = useState("");
   const [selectedCrop, setSelectedCrop] = useState("");
-  const [data, setData] = useState([]);
+  const [chartData, setChartData] = useState([]);
+  const [capacityData, setCapacityData] = useState({});
+  const [suggestion, setSuggestion] = useState("");
+  const navigate = useNavigate();
 
-  // Fetch all mandis
   useEffect(() => {
-    fetch("http://localhost:5000/api/mandis")
-      .then((res) => res.json())
-      .then((data) => setMandis(data))
-      .catch((err) => console.error("Error fetching mandis:", err));
+    getAllMandis().then((res) => {
+      setMandis(res.data || []);
+    }).catch(console.error);
   }, []);
 
-  // Fetch all crops
   useEffect(() => {
-    fetch("http://localhost:5000/api/crops")
-      .then((res) => res.json())
-      .then((data) => setCrops(data))
-      .catch((err) => console.error("Error fetching crops:", err));
+    getCapacity()
+      .then((res) => {
+        const capObj = {};
+        (res.data.data || []).forEach(item => {
+          if (!capObj[item.mandi_name]) capObj[item.mandi_name] = {};
+          capObj[item.mandi_name][item.crop] = parseFloat(item.max_capacity);
+        });
+        setCapacityData(capObj);
+      })
+      .catch((err) => console.error("❌ Error loading capacity:", err));
   }, []);
 
-  // Fetch yield data for selected mandi
-  useEffect(() => {
-    if (selectedMandi) {
-      fetch(`http://localhost:5000/api/mandi_crop_yield/${selectedMandi}`)
-        .then((res) => res.json())
-        .then((data) => setData(data))
-        .catch((err) => console.error("Error fetching mandi yield:", err));
-    }
-  }, [selectedMandi]);
+  const handleOptionChange = (e) => {
+    setOption(e.target.value);
+    setSelectedCrop("");
+    setSelectedMandi("");
+    setChartData([]);
+    setSuggestion("");
+  };
 
-  // Fetch yield data for selected crop
-  useEffect(() => {
-    if (selectedCrop) {
-      fetch(`http://localhost:5000/api/crop_mandi_yield/${selectedCrop}`)
-        .then((res) => res.json())
-        .then((data) => setData(data))
-        .catch((err) => console.error("Error fetching crop yield:", err));
+  const handleMandiChange = async (e) => {
+    const mandi = e.target.value;
+    setSelectedMandi(mandi);
+
+    try {
+      const res = await getMandiCropData(mandi);
+      const data = cropsList.map(crop => {
+        const cropData = res.data.find(row => row.crop === crop);
+        const totalYield = cropData ? parseFloat(cropData.yield) : 0;
+        const maxCap = capacityData[mandi]?.[crop] || 0;
+
+        return {
+          crop,
+          totalYield,
+          maxCap,
+          fill: totalYield > maxCap ? "#ff4d4d" : "#28a745"
+        };
+      });
+
+      setChartData(data);
+
+      const maxRatioCrop = data.reduce((a, b) =>
+        (b.totalYield / b.maxCap) > (a.totalYield / a.maxCap) ? b : a
+      );
+      setSuggestion(`✅ Best crop to supply: ${maxRatioCrop.crop}`);
+    } catch (err) {
+      console.error(err);
     }
-  }, [selectedCrop]);
+  };
+
+  const handleCropChange = async (e) => {
+    const crop = e.target.value;
+    setSelectedCrop(crop);
+
+    try {
+      const res = await getCropAllMandisData(crop);
+      const data = res.data.map(item => {
+        const maxCap = capacityData[item.mandi_name]?.[crop] || 0;
+        const totalYield = parseFloat(item.total_yield);
+
+        return {
+          mandi: item.mandi_name,
+          totalYield,
+          maxCap,
+          fill: totalYield > maxCap ? "#ff4d4d" : "#28a745"
+        };
+      });
+
+      setChartData(data);
+
+      const bestMandi = data.reduce((a, b) =>
+        (b.totalYield / b.maxCap) > (a.totalYield / a.maxCap) ? b : a
+      );
+      setSuggestion(`🚛 Best mandi to supply: ${bestMandi.mandi}`);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <>
-      {/* ✅ Navbar OUTSIDE container so it becomes full width */}
-      <Navbar
-        onHomeClick={goToHome}
-        onPredictClick={goToPredict}
-        onProfileClick={goToProfile}
+      {/* ✅ Navbar visible on this screen */}
+      <Navbar onHomeClick={() => window.location.href = "/"} />
+        <Navbar
+        onHomeClick={() => navigate("/")}
+        onPredictClick={() => navigate("/predict")}
+        onLiveStatusClick={() => navigate("/livestatus")}
+        onProfileClick={() => navigate("/profile")}
+        onCompareClick={() => navigate("/compare")}
       />
 
-      <div style={containerStyle}>
-        {!view ? (
-          <div style={cardStyle}>
-            <h2>📊 Know the Demand, Plan Smart!</h2>
-            <p style={{ marginBottom: "20px" }}>
-              Choose a mode to see live crop statistics and mandi trends.
-            </p>
-            <div style={{ display: "flex", gap: "20px" }}>
-              <button style={buttonStyle} onClick={() => setView("mandi")}>
-                Mandi
-              </button>
-              <button style={buttonStyle} onClick={() => setView("crop")}>
-                Crop
-              </button>
-            </div>
-          </div>
-        ) : view === "mandi" ? (
-          <div style={cardStyle}>
-            <h2>🏪 Mandi-wise Crop Yield</h2>
-            <select
-              value={selectedMandi}
-              onChange={(e) => setSelectedMandi(e.target.value)}
-              style={dropdownStyle}
-            >
-              <option value="">Select a Mandi</option>
-              {mandis.map((m) => (
-                <option key={m} value={m}>
-                  {m}
-                </option>
-              ))}
-            </select>
+      <div style={{ padding: "20px", fontFamily: "Poppins, sans-serif" }}>
+        <h2>📊 Live Status</h2>
 
-            {data.length > 0 && (
-              <div style={{ marginTop: "30px", width: "100%", height: "400px" }}>
-                <ResponsiveContainer>
-                  <BarChart data={data}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="crop" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar
-                      dataKey="total_yield"
-                      name="Total Yield"
-                      fill="#4CAF50"
-                      radius={[10, 10, 0, 0]}
-                    >
-                      <LabelList dataKey="total_yield" position="top" />
-                    </Bar>
-                    <Bar
-                      dataKey="max_capacity"
-                      name="Max Capacity"
-                      fill="#ccc"
-                      radius={[10, 10, 0, 0]}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-                <p style={{ marginTop: "15px", fontStyle: "italic" }}>
-                  Crops that reached capacity appear in gray.
-                </p>
-              </div>
-            )}
-          </div>
-        ) : view === "crop" ? (
-          <div style={cardStyle}>
-            <h2>🌾 Crop-wise Mandi Yield</h2>
-            <select
-              value={selectedCrop}
-              onChange={(e) => setSelectedCrop(e.target.value)}
-              style={dropdownStyle}
-            >
-              <option value="">Select a Crop</option>
-              {crops.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
+        <div style={{ margin: "15px 0" }}>
+          <label>
+            <input type="radio" name="option" value="mandi" checked={option === "mandi"} onChange={handleOptionChange} />
+            Select Mandi
+          </label>
 
-            {data.length > 0 && (
-              <div style={{ marginTop: "30px", width: "100%", height: "400px" }}>
-                <ResponsiveContainer>
-                  <BarChart data={data}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="mandi_name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar
-                      dataKey="total_yield"
-                      name="Total Yield"
-                      fill="#4CAF50"
-                      radius={[10, 10, 0, 0]}
-                    >
-                      <LabelList dataKey="total_yield" position="top" />
-                    </Bar>
-                    <Bar
-                      dataKey="max_capacity"
-                      name="Max Capacity"
-                      fill="#f44336"
-                      radius={[10, 10, 0, 0]}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-                <p style={{ marginTop: "15px", fontStyle: "italic" }}>
-                  Mandis exceeding capacity are shown in red.
-                </p>
-              </div>
-            )}
+          <label style={{ marginLeft: "20px" }}>
+            <input type="radio" name="option" value="crop" checked={option === "crop"} onChange={handleOptionChange} />
+            Select Crop
+          </label>
+        </div>
+
+        {option === "mandi" && (
+          <select value={selectedMandi} onChange={handleMandiChange}>
+            <option value="">-- Select Mandi --</option>
+            {mandis.map(m => <option key={m} value={m}>{m}</option>)}
+          </select>
+        )}
+
+        {option === "crop" && (
+          <select value={selectedCrop} onChange={handleCropChange}>
+            <option value="">-- Select Crop --</option>
+            {cropsList.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+        )}
+
+        {chartData.length > 0 && (
+          <div style={{ marginTop: "30px", width: "100%", height: "400px" }}>
+            <ResponsiveContainer>
+              <BarChart data={chartData}>
+                <XAxis dataKey={option === "mandi" ? "crop" : "mandi"} />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="totalYield">
+                  <LabelList dataKey="totalYield" position="top" />
+                </Bar>
+                <Bar dataKey="maxCap" fill="#8884d8" />
+              </BarChart>
+            </ResponsiveContainer>
+            <div style={{ marginTop: "15px", fontWeight: 600 }}>{suggestion}</div>
           </div>
-        ) : null}
+        )}
       </div>
     </>
   );
 }
-
-// --- Styles ---
-const containerStyle = {
-  minHeight: "100vh",
-  backgroundColor: "#f0f7f4",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  fontFamily: '"Poppins", sans-serif',
-  flexDirection: "column",
-  padding: "40px",
-};
-
-const cardStyle = {
-  backgroundColor: "#ffffff",
-  padding: "40px",
-  borderRadius: "16px",
-  boxShadow: "0 8px 20px rgba(0, 0, 0, 0.08)",
-  textAlign: "center",
-  width: "600px",
-};
-
-const buttonStyle = {
-  backgroundColor: "#2e7d32",
-  color: "#fff",
-  padding: "10px 20px",
-  border: "none",
-  borderRadius: "8px",
-  cursor: "pointer",
-  fontWeight: "600",
-};
-
-const dropdownStyle = {
-  marginTop: "15px",
-  padding: "10px",
-  width: "60%",
-  borderRadius: "8px",
-  border: "1px solid #ccc",
-  fontSize: "15px",
-};
 
 export default LiveStatus;

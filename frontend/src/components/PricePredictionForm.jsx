@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import ResultDisplay from "./ResultDisplay";
+import { predictPrice } from "../services/api";
+import Navbar from "./Navbar";
 
 function PricePredictionForm() {
   const [formData, setFormData] = useState({
@@ -10,7 +12,7 @@ function PricePredictionForm() {
     humidity: "",
     soilType: "",
     irrigation: "",
-    crops: "",
+    crop: "",   // ✅ changed from crops → crop
     season: "",
     mandi: "",
   });
@@ -25,32 +27,30 @@ function PricePredictionForm() {
     e.preventDefault();
 
     const payload = {
-      crop: formData.crops,
-      mandi: formData.mandi,
-      timestamp: new Date().toISOString(),
+      ...formData,
+      area: parseFloat(formData.area),
+      rainfall: parseFloat(formData.rainfall),
+      temperature: parseFloat(formData.temperature),
+      humidity: parseFloat(formData.humidity),
+      timestamp: new Date().toISOString(), // ✅ backend needs this timestamp
     };
 
     try {
-      const res = await fetch("http://localhost:5000/api/predict_price", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
+      const response = await predictPrice(payload);
+      const data = response.data;
 
       setResult({
-        predictedPrice: `₹${data.predicted_price.toFixed(2)}`,
-        modifiedPrice: `₹${data.modified_price.toFixed(2)}`, // ✅ added
-        predictedYield: `${data.predicted_yield.toFixed(2)} kg`,
+        predictedPrice: `₹${data.predicted_price}`,
+        modifiedPrice: `₹${data.modified_price}`,
+        predictedYield: `${data.predicted_yield} kg`,
         mandi: formData.mandi,
         season: formData.season,
-        crop: formData.crops,
+        crop: formData.crop,
         fullForm: formData,
       });
     } catch (error) {
-      console.error("Error fetching price:", error);
-      alert("Failed to get predicted price. Please try again.");
+      console.error("Prediction Error:", error.response?.data || error);
+      alert("Prediction failed. Check backend logs.");
     }
   };
 
@@ -62,17 +62,21 @@ function PricePredictionForm() {
     <div style={pageStyle}>
       <div style={cardStyle}>
         <h2 style={headingStyle}>🌱 Crop Price Prediction</h2>
+
         <form onSubmit={handleSubmit} style={formStyle}>
-          <input type="text" name="location" placeholder="Location" value={formData.location} onChange={handleChange} required style={inputStyle} />
-          <input type="number" name="area" placeholder="Area (in acres)" value={formData.area} onChange={handleChange} required style={inputStyle} />
-          <input type="number" name="rainfall" placeholder="Rainfall (mm)" value={formData.rainfall} onChange={handleChange} required style={inputStyle} />
-          <input type="number" name="temperature" placeholder="Temperature (°C)" value={formData.temperature} onChange={handleChange} required style={inputStyle} />
-          <input type="number" name="humidity" placeholder="Humidity (%)" value={formData.humidity} onChange={handleChange} required style={inputStyle} />
-          <input type="text" name="soilType" placeholder="Soil Type" value={formData.soilType} onChange={handleChange} required style={inputStyle} />
-          <input type="text" name="irrigation" placeholder="Irrigation Method" value={formData.irrigation} onChange={handleChange} required style={inputStyle} />
-          <input type="text" name="crops" placeholder="Crops" value={formData.crops} onChange={handleChange} required style={inputStyle} />
-          <input type="text" name="season" placeholder="Season" value={formData.season} onChange={handleChange} required style={inputStyle} />
-          <input type="text" name="mandi" placeholder="Mandi" value={formData.mandi} onChange={handleChange} required style={inputStyle} />
+          {Object.keys(formData).map((key) => (
+            <input
+              key={key}
+              type="text"
+              name={key}
+              placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
+              value={formData[key]}
+              onChange={handleChange}
+              required
+              style={inputStyle}
+            />
+          ))}
+
           <button type="submit" style={buttonStyle}>Predict Price</button>
         </form>
       </div>
@@ -80,7 +84,9 @@ function PricePredictionForm() {
   );
 }
 
-// --- Styling (unchanged) ---
+export default PricePredictionForm;
+
+/* ---- Styling ---- */
 const pageStyle = {
   minHeight: "100vh",
   backgroundColor: "#e6f4ea",
@@ -134,5 +140,3 @@ const buttonStyle = {
   marginTop: "8px",
   transition: "background 0.3s ease",
 };
-
-export default PricePredictionForm;

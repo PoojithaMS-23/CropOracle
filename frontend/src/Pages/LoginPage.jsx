@@ -12,28 +12,32 @@ function LoginPage({ goToSignup, goToHome, setProfile }) {
   };
 
   const handleLogin = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      const response = await fetch("http://localhost:5000/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+  try {
+    const response = await fetch("http://localhost:5000/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
 
-      const result = await response.json();
+    const result = await response.json();
 
-      if (response.ok) {
-        setProfile(result.farmer); // store logged-in farmer in App state
-        goToHome();                // navigate to home
-      } else {
-        alert(result.message || "Login failed");
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      alert("Unable to connect to the server");
+    if (response.ok) {
+      // ✅ Store farmer details (including farmer_id) in localStorage
+      localStorage.setItem("farmer", JSON.stringify(result.farmer));
+
+      setProfile(result.farmer); // keep existing functionality
+      goToHome();                // redirect to home
+    } else {
+      alert(result.message || "Login failed");
     }
-  };
+  } catch (error) {
+    console.error("Login error:", error);
+    alert("Unable to connect to the server");
+  }
+};
+
 
   return (
     <div style={styles.wrapper}>

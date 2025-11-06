@@ -1,6 +1,6 @@
 import React from 'react';
 
-function Navbar({ onPredictClick, onHomeClick, onProfileClick, onLiveStatusClick }) {
+function Navbar({ onHomeClick, onPredictClick, onLiveStatusClick, onProfileClick, onCompareClick }) {
   return (
     <nav
       style={{
@@ -35,6 +35,9 @@ function Navbar({ onPredictClick, onHomeClick, onProfileClick, onLiveStatusClick
         </li>
         <li>
           <span onClick={onProfileClick} style={{ cursor: 'pointer' }}>Profile</span>
+        </li>
+        <li>
+          <span onClick={onCompareClick} style={{ cursor: 'pointer' }}>Predict Price in Different Mandis</span>
         </li>
       </ul>
     </nav>
