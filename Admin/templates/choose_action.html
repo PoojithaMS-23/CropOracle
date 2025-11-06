@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Choose Action</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #43cea2, #185a9d);
+            color: white;
+            text-align: center;
+            padding: 50px;
+        }
+
+        h1 {
+            margin-bottom: 40px;
+        }
+
+        .action-btn {
+            display: inline-block;
+            background-color: #0d6efd;
+            color: white;
+            padding: 15px 30px;
+            margin: 10px;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        .action-btn:hover {
+            background-color: #084298;
+        }
+
+        .logout-btn {
+            background-color: #dc3545;
+            margin-top: 40px;
+        }
+
+        .logout-btn:hover {
+            background-color: #a71d2a;
+        }
+
+        .flash-message {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 1px solid white;
+            padding: 10px;
+            border-radius: 8px;
+            width: 60%;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Welcome, Admin</h1>
+
+    <!-- ✅ Flash messages -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for msg in messages %}
+                <div class="flash-message">{{ msg }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- ✅ Action Buttons -->
+    <a href="{{ url_for('update_msr') }}" class="action-btn">Update MSR</a>
+    <a href="{{ url_for('update_capacity') }}" class="action-btn">Update Capacity</a>
+
+    <!-- ✅ Logout -->
+    <form action="{{ url_for('login') }}" method="get">
+        <button type="submit" class="action-btn logout-btn">Logout</button>
+    </form>
+
+</body>
+</html>

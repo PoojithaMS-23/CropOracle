@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update MSR</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(to right, #43cea2, #185a9d);
+            color: white;
+            text-align: center;
+            padding: 40px;
+        }
+        select, input {
+            padding: 8px;
+            border-radius: 8px;
+            margin: 10px;
+            border: none;
+        }
+        button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Update Minimum Support Rate (MSR)</h1>
+    <form method="POST">
+        <label>Select Crop:</label>
+        <select name="crop_name" required>
+            <option value="">--Select Crop--</option>
+            {% for crop in crops %}
+                <option value="{{ crop.crop_name }}" {% if selected_crop == crop.crop_name %}selected{% endif %}>
+                    {{ crop.crop_name }}
+                </option>
+            {% endfor %}
+        </select>
+        <br>
+        <button name="fetch">Fetch</button><br><br>
+
+        {% if old_price %}
+            <p>Current MSR: {{ old_price }}</p>
+            <input type="number" name="new_price" placeholder="Enter new MSR" required>
+            <br>
+            <button name="update">Update</button>
+        {% endif %}
+    </form>
+</body>
+</html>

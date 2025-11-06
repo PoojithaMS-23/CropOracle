@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Capacity</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(to right, #43cea2, #185a9d);
+            color: white;
+            text-align: center;
+            padding: 40px;
+        }
+        select, input {
+            padding: 8px;
+            border-radius: 8px;
+            margin: 10px;
+            border: none;
+        }
+        button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Update Mandi Capacity</h1>
+    <form method="POST">
+        <label>Select Mandi:</label>
+        <select name="mandi_name" required>
+            <option value="">--Select Mandi--</option>
+            {% for mandi in mandis %}
+                <option value="{{ mandi.mandi_name }}" {% if selected_mandi == mandi.mandi_name %}selected{% endif %}>
+                    {{ mandi.mandi_name }}
+                </option>
+            {% endfor %}
+        </select>
+        <br>
+
+        <label>Select Crop ID:</label>
+        <select name="crop_id" required>
+            <option value="">--Select Crop ID--</option>
+            {% for crop in crops %}
+                <option value="{{ crop.crop_id }}" {% if selected_crop == crop.crop_id %}selected{% endif %}>
+                    {{ crop.crop_id }}
+                </option>
+            {% endfor %}
+        </select>
+        <br>
+
+        <button name="fetch">Fetch</button><br><br>
+
+        {% if old_capacity %}
+            <p>Current Capacity: {{ old_capacity }}</p>
+            <input type="number" name="new_capacity" placeholder="Enter new capacity" required>
+            <br>
+            <button name="update">Update</button>
+        {% endif %}
+    </form>
+</body>
+</html>
