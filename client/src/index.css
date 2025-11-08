@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+/* ✅ Allow full-screen layout but enable vertical scrolling */
+html, body, #root {
+  min-height: 100vh; /* allow growth if content exceeds screen */
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: transparent !important;
+  overflow-x: hidden; /* hide sideways scroll only */
+  overflow-y: auto;  /* allow vertical scrolling globally */
+}
+
+/* ✅ Smooth scrolling behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ✅ Base styling */
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #fff;
+  background: transparent !important;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ✅ Neutralize default link/button styles */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+a:hover {
+  opacity: 0.85;
+}
+
+button {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+button:focus {
+  outline: none;
+}

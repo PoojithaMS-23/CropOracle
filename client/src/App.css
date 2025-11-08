@@ -1,0 +1,75 @@
+/* ✅ Allow pages to use full height naturally — but scroll if needed */
+#root {
+  width: 100%;
+  min-height: 100vh; /* changed from fixed height */
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  overflow-x: hidden; /* only hide sideways overflow, keep vertical scroll */
+}
+
+/* ✅ Keep nice typography and transparent background */
+body {
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  color: #f1f5f9;
+  background: transparent !important;
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
+  overflow-y: auto; /* re-enable vertical scrolling globally */
+}
+
+/* ✅ Let HTML expand freely */
+html, body {
+  width: 100%;
+  min-height: 100%; /* use min-height instead of fixed height */
+}
+
+/* Remove old card & logo styles */
+.logo, .card, .read-the-docs {
+  all: unset;
+}
+
+/* ✅ Optional fade-in effect for modern transitions */
+.fade-in {
+  animation: fadeIn 0.8s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ✅ Background subtle motion (used by bg-animate) */
+@keyframes bgMove {
+  0% { background-position: center; }
+  100% { background-position: center 40px; }
+}
+.bg-animate {
+  animation: bgMove 15s ease-in-out infinite alternate;
+}
+
+/* Smooth scrolling globally */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ✅ Emerald glowing animation — used only where .animate-glow is applied */
+@keyframes emeraldGlow {
+  0%, 100% {
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 60px rgba(16, 185, 129, 0.5);
+  }
+}
+
+.animate-glow {
+  animation: emeraldGlow 4s ease-in-out infinite;
+}
